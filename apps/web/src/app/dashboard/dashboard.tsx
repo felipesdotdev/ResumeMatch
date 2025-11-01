@@ -1,18 +1,23 @@
 "use client";
-import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
-import { trpc } from "@/utils/trpc";
+import axios from "axios";
+import type { authClient } from "@/lib/auth-client";
+import "@/lib/api";
 
-export default function Dashboard({
-	session,
-}: {
-	session: typeof authClient.$Infer.Session;
+export default function Dashboard(_props: {
+  session: typeof authClient.$Infer.Session;
 }) {
-	const privateData = useQuery(trpc.privateData.queryOptions());
+  const privateData = useQuery({
+    queryKey: ["private-data"],
+    queryFn: async () => {
+      const res = await axios.get<unknown[]>("/todos", {
+        withCredentials: true,
+      });
+      return {
+        message: `Todos: ${Array.isArray(res.data) ? res.data.length : 0}`,
+      };
+    },
+  });
 
-	return (
-		<>
-			<p>API: {privateData.data?.message}</p>
-		</>
-	);
+  return <p>API: {privateData.data?.message}</p>;
 }

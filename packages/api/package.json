@@ -1,35 +1,37 @@
 {
   "name": "@resumematch/api",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+      "default": "./dist/index.js"
     },
     "./*": {
       "types": "./dist/*.d.ts",
-      "default": "./src/*.ts"
+      "default": "./dist/*.js"
     }
   },
-  "type": "module",
   "scripts": {
-    "build": "tsdown"
-  },
-  "devDependencies": {
-    "tsdown": "catalog:"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -w -p tsconfig.json",
+    "dev": "tsc -w -p tsconfig.json",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@trpc/server": "catalog:",
-    "@trpc/client": "catalog:",
-    "better-auth": "catalog:",
-    "drizzle-orm": "catalog:",
-    "ai": "catalog:",
-    "@ai-sdk/google": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "catalog:",
-    "@resumematch/auth": "workspace:*",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/swagger": "^11.0.0",
     "@resumematch/db": "workspace:*"
+  },
+  "peerDependencies": {
+    "@nestjs/core": "^11.0.0",
+    "drizzle-orm": "catalog:",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.0"
   }
 }

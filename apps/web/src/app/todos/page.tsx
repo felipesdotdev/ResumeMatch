@@ -1,135 +1,152 @@
 "use client";
 
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Loader2, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Loader2, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { trpc } from "@/utils/trpc";
+import { type Todo, todosApi } from "@/lib/api";
 
 export default function TodosPage() {
-	const [newTodoText, setNewTodoText] = useState("");
+  const [newTodoText, setNewTodoText] = useState("");
 
-	const todos = useQuery(trpc.todo.getAll.queryOptions());
-	const createMutation = useMutation(
-		trpc.todo.create.mutationOptions({
-			onSuccess: () => {
-				todos.refetch();
-				setNewTodoText("");
-			},
-		}),
-	);
-	const toggleMutation = useMutation(
-		trpc.todo.toggle.mutationOptions({
-			onSuccess: () => {
-				todos.refetch();
-			},
-		}),
-	);
-	const deleteMutation = useMutation(
-		trpc.todo.delete.mutationOptions({
-			onSuccess: () => {
-				todos.refetch();
-			},
-		}),
-	);
+  const todos = useQuery<Todo[]>({
+    queryKey: ["todos"],
+    queryFn: () => todosApi.list(),
+  });
 
-	const handleAddTodo = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (newTodoText.trim()) {
-			createMutation.mutate({ text: newTodoText });
-		}
-	};
+  const createMutation = useMutation({
+    mutationFn: async (vars: { text: string }) => {
+      await todosApi.create({ title: vars.text });
+    },
+    onSuccess: () => {
+      todos.refetch();
+      setNewTodoText("");
+    },
+  });
 
-	const handleToggleTodo = (id: number, completed: boolean) => {
-		toggleMutation.mutate({ id, completed: !completed });
-	};
+  const toggleMutation = useMutation({
+    mutationFn: async (vars: { id: number; completed: boolean }) => {
+      await todosApi.update(vars.id, { completed: vars.completed });
+    },
+    onSuccess: () => {
+      todos.refetch();
+    },
+  });
 
-	const handleDeleteTodo = (id: number) => {
-		deleteMutation.mutate({ id });
-	};
+  const deleteMutation = useMutation({
+    mutationFn: async (vars: { id: number }) => {
+      await todosApi.remove(vars.id);
+    },
+    onSuccess: () => {
+      todos.refetch();
+    },
+  });
 
-	return (
-		<div className="mx-auto w-full max-w-md py-10">
-			<Card>
-				<CardHeader>
-					<CardTitle>Todo List</CardTitle>
-					<CardDescription>Manage your tasks efficiently</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<form
-						onSubmit={handleAddTodo}
-						className="mb-6 flex items-center space-x-2"
-					>
-						<Input
-							value={newTodoText}
-							onChange={(e) => setNewTodoText(e.target.value)}
-							placeholder="Add a new task..."
-							disabled={createMutation.isPending}
-						/>
-						<Button
-							type="submit"
-							disabled={createMutation.isPending || !newTodoText.trim()}
-						>
-							{createMutation.isPending ? (
-								<Loader2 className="h-4 w-4 animate-spin" />
-							) : (
-								"Add"
-							)}
-						</Button>
-					</form>
+  const handleAddTodo = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newTodoText.trim()) {
+      createMutation.mutate({ text: newTodoText });
+    }
+  };
 
-					{todos.isLoading ? (
-						<div className="flex justify-center py-4">
-							<Loader2 className="h-6 w-6 animate-spin" />
-						</div>
-					) : todos.data?.length === 0 ? (
-						<p className="py-4 text-center">No todos yet. Add one above!</p>
-					) : (
-						<ul className="space-y-2">
-							{todos.data?.map((todo) => (
-								<li
-									key={todo.id}
-									className="flex items-center justify-between rounded-md border p-2"
-								>
-									<div className="flex items-center space-x-2">
-										<Checkbox
-											checked={todo.completed}
-											onCheckedChange={() =>
-												handleToggleTodo(todo.id, todo.completed)
-											}
-											id={`todo-${todo.id}`}
-										/>
-										<label
-											htmlFor={`todo-${todo.id}`}
-											className={`${todo.completed ? "line-through text-muted-foreground" : ""}`}
-										>
-											{todo.text}
-										</label>
-									</div>
-									<Button
-										variant="ghost"
-										size="icon"
-										onClick={() => handleDeleteTodo(todo.id)}
-										aria-label="Delete todo"
-									>
-										<Trash2 className="h-4 w-4" />
-									</Button>
-								</li>
-							))}
-						</ul>
-					)}
-				</CardContent>
-			</Card>
-		</div>
-	);
+  const handleToggleTodo = (id: number, completed: boolean) => {
+    toggleMutation.mutate({ id, completed: !completed });
+  };
+
+  const handleDeleteTodo = (id: number) => {
+    deleteMutation.mutate({ id });
+  };
+
+  return (
+    <div className="mx-auto w-full max-w-md py-10">
+      <Card>
+        <CardHeader>
+          <CardTitle>Todo List</CardTitle>
+          <CardDescription>Manage your tasks efficiently</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form
+            className="mb-6 flex items-center space-x-2"
+            onSubmit={handleAddTodo}
+          >
+            <Input
+              disabled={createMutation.isPending}
+              onChange={(e) => setNewTodoText(e.target.value)}
+              placeholder="Add a new task..."
+              value={newTodoText}
+            />
+            <Button
+              disabled={createMutation.isPending || !newTodoText.trim()}
+              type="submit"
+            >
+              {createMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Add"
+              )}
+            </Button>
+          </form>
+
+          {(() => {
+            if (todos.isLoading) {
+              return (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              );
+            }
+            const items = todos.data ?? [];
+            if (items.length === 0) {
+              return (
+                <p className="py-4 text-center">No todos yet. Add one above!</p>
+              );
+            }
+            return (
+              <ul className="space-y-2">
+                {items.map((todo) => (
+                  <li
+                    className="flex items-center justify-between rounded-md border p-2"
+                    key={todo.id}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={todo.completed}
+                        id={`todo-${todo.id}`}
+                        onCheckedChange={() =>
+                          handleToggleTodo(todo.id, todo.completed)
+                        }
+                      />
+                      <label
+                        className={`${todo.completed ? "text-muted-foreground line-through" : ""}`}
+                        htmlFor={`todo-${todo.id}`}
+                      >
+                        {todo.title}
+                      </label>
+                    </div>
+                    <Button
+                      aria-label="Delete todo"
+                      onClick={() => handleDeleteTodo(todo.id)}
+                      size="icon"
+                      variant="ghost"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            );
+          })()}
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

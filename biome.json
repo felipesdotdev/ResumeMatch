@@ -16,14 +16,75 @@
       "!bts.jsonc",
       "!**/.expo",
       "!**/.wrangler",
-      "!**/.alchemy",
-      "!**/.svelte-kit",
-      "!**/wrangler.jsonc",
-      "!**/.source"
-    ]
+    "!**/.alchemy",
+    "!**/.svelte-kit",
+    "!**/wrangler.jsonc",
+    "!**/.source"
+  ]
   },
-  "extends": [
-    "ultracite/core",
-    "ultracite/next"
+  "extends": ["ultracite/core", "ultracite/next"],
+  "overrides": [
+    {
+      "includes": ["packages/api/**/*.ts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedFunctionParameters": "off",
+            "noUnusedVariables": "off"
+          },
+          "nursery": {
+            "noIncrementDecrement": "off"
+          },
+          "performance": {
+            "noBarrelFile": "off"
+          },
+          "style": {
+            "useBlockStatements": "off"
+          }
+        }
+      },
+      "javascript": {
+        "parser": {
+          "unsafeParameterDecoratorsEnabled": true
+        }
+      }
+    },
+    {
+      "includes": ["packages/api-client/**/*.ts"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/auth/**/*.ts"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noNamespaceImport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedFunctionParameters": "off"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "warn"
+          },
+          "style": {
+            "noMagicNumbers": "warn",
+            "noNestedTernary": "warn"
+          }
+        }
+      }
+    }
   ]
 }

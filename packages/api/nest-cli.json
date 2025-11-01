@@ -1,0 +1,10 @@
+{
+  "collection": "@nestjs/schematics",
+  "entryFile": "index",
+  "language": "ts",
+  "sourceRoot": "src",
+  "monorepo": true,
+  "generateOptions": {
+    "module": true
+  }
+}

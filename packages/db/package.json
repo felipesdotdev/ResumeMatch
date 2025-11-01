@@ -4,33 +4,37 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+      "default": "./dist/index.js"
     },
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "default": "./src/*.ts"
+    "./schema/*": {
+      "types": "./dist/schema/*.d.ts",
+      "default": "./dist/schema/*.js"
     }
   },
   "scripts": {
     "build": "tsdown",
+    "dev": "tsdown --watch",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.31.2",
     "@types/ws": "^8.18.1",
+    "drizzle-kit": "^0.31.6",
     "tsdown": "catalog:"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
-    "drizzle-orm": "catalog:",
-    "@neondatabase/serverless": "^1.0.1",
-    "ws": "^8.18.3",
+    "@neondatabase/serverless": "^1.0.2",
     "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
+    "ws": "^8.18.3",
     "zod": "catalog:"
   }
 }

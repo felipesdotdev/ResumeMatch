@@ -1,24 +1,25 @@
 "use client";
 
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { queryClient } from "@/utils/trpc";
+import { useMemo } from "react";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-	return (
-		<ThemeProvider
-			attribute="class"
-			defaultTheme="system"
-			enableSystem
-			disableTransitionOnChange
-		>
-			<QueryClientProvider client={queryClient}>
-				{children}
-				<ReactQueryDevtools />
-			</QueryClientProvider>
-			<Toaster richColors />
-		</ThemeProvider>
-	);
+  const queryClient = useMemo(() => new QueryClient(), []);
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      disableTransitionOnChange
+      enableSystem
+    >
+      <QueryClientProvider client={queryClient}>
+        {children}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+      <Toaster richColors />
+    </ThemeProvider>
+  );
 }

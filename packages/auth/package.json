@@ -3,16 +3,20 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+      "default": "./dist/index.js"
     },
     "./*": {
       "types": "./dist/*.d.ts",
-      "default": "./src/*.ts"
+      "default": "./dist/*.js"
     }
   },
   "type": "module",
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check-types": "tsc --noEmit"
   },
   "devDependencies": {
     "tsdown": "catalog:"
@@ -21,9 +25,9 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@resumematch/db": "workspace:*",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
-    "zod": "catalog:",
-    "@resumematch/db": "workspace:*"
+    "zod": "catalog:"
   }
 }
