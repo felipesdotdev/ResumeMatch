@@ -7,6 +7,9 @@ export default function Header() {
   const links = [
     { to: "/", label: "Home" },
     { to: "/dashboard", label: "Dashboard" },
+    { to: "/analyze", label: "Analisar Vaga" },
+    { to: "/resume", label: "Meu Currículo" },
+    { to: "/compare", label: "Comparar" },
     { to: "/todos", label: "Todos" },
     { to: "/ai", label: "AI Chat" },
   ] as const;

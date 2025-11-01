@@ -10,7 +10,7 @@ catalogs:
       specifier: ^22.18.13
       version: 22.18.13
     ai:
-      specifier: ^5.0.83
+      specifier: 5.0.83
       version: 5.0.83
     better-auth:
       specifier: ^1.3.34
@@ -308,6 +308,15 @@ importers:
 
   packages/api:
     dependencies:
+      '@ai-sdk/anthropic':
+        specifier: ^2.0.40
+        version: 2.0.40(zod@4.1.12)
+      '@ai-sdk/groq':
+        specifier: ^2.0.27
+        version: 2.0.27(zod@4.1.12)
+      '@ai-sdk/openai':
+        specifier: ^2.0.59
+        version: 2.0.59(zod@4.1.12)
       '@nestjs/common':
         specifier: ^11.0.0
         version: 11.1.8(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -317,9 +326,15 @@ importers:
       '@nestjs/swagger':
         specifier: ^11.0.0
         version: 11.2.1(@fastify/static@8.3.0)(@nestjs/common@11.1.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)(reflect-metadata@0.2.2)
+      '@resumematch/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@resumematch/db':
         specifier: workspace:*
         version: link:../db
+      ai:
+        specifier: 'catalog:'
+        version: 5.0.83(zod@4.1.12)
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.44.7(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(kysely@0.28.8)
@@ -329,6 +344,9 @@ importers:
       rxjs:
         specifier: ^7.8.0
         version: 7.8.2
+      zod:
+        specifier: 'catalog:'
+        version: 4.1.12
 
   packages/api-client:
     dependencies:
@@ -391,14 +409,38 @@ importers:
 
 packages:
 
+  '@ai-sdk/anthropic@2.0.40':
+    resolution: {integrity: sha512-aHtqlIIS8lyesSNFxevLGWozCCZ1xQ4Wy2HfQSVVQu3dWtndfPzF6hbWof2Way+qNrvRtjnBpRQyaVeu6Js4pQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/gateway@2.0.4':
     resolution: {integrity: sha512-YakzaijPayJI244AOAXX+29WY+6i40vbvyMggfBB5D75ui8GyJPHvD/1TCSdD8lUyD4/QJvi9xSQ26QnPjmhag==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
+  '@ai-sdk/groq@2.0.27':
+    resolution: {integrity: sha512-n5Ap/uLIUbBz3DYy4yvkIKoBUj1Bb6jJ7+hVlvveqdvmxSEPXjN47hs4Pj2pwZMAXoILVSTmd8wu24tmekidUA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/openai@2.0.59':
+    resolution: {integrity: sha512-ylaL91BrMyqHsprEI0+brvvGwDjRlKxsJTRL1kpzx6AhG37JqpECQwuqNk7aq+T5Qww9w7dqn1JMUuVPvyZtsA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/provider-utils@3.0.14':
     resolution: {integrity: sha512-CYRU6L7IlR7KslSBVxvlqlybQvXJln/PI57O8swhOaDIURZbjRP2AY3igKgUsrmWqqnFFUHP+AwTN8xqJAknnA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider-utils@3.0.15':
+    resolution: {integrity: sha512-kOc6Pxb7CsRlNt+sLZKL7/VGQUd7ccl3/tIK+Bqf5/QhHR0Qm3qRBMz1IwU1RmjJEZA73x+KB5cUckbDl2WF7Q==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -8050,6 +8092,12 @@ packages:
 
 snapshots:
 
+  '@ai-sdk/anthropic@2.0.40(zod@4.1.12)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.15(zod@4.1.12)
+      zod: 4.1.12
+
   '@ai-sdk/gateway@2.0.4(zod@4.1.12)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
@@ -8057,7 +8105,26 @@ snapshots:
       '@vercel/oidc': 3.0.3
       zod: 4.1.12
 
+  '@ai-sdk/groq@2.0.27(zod@4.1.12)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.15(zod@4.1.12)
+      zod: 4.1.12
+
+  '@ai-sdk/openai@2.0.59(zod@4.1.12)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.15(zod@4.1.12)
+      zod: 4.1.12
+
   '@ai-sdk/provider-utils@3.0.14(zod@4.1.12)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@standard-schema/spec': 1.0.0
+      eventsource-parser: 3.0.6
+      zod: 4.1.12
+
+  '@ai-sdk/provider-utils@3.0.15(zod@4.1.12)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
       '@standard-schema/spec': 1.0.0

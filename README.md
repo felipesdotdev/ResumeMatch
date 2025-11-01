@@ -58,10 +58,12 @@ Get compatibility scores, keyword suggestions & AI-generated cover letters.
   - Extract keywords, requirements, and skills
   - Identify must-have vs. nice-to-have qualifications
 
-- ✅ **Resume Compatibility Score**
-  - Calculate match percentage with job posting
-  - Visual breakdown of compatibility factors
-  - Identify critical gaps
+- ✅ **Resume Compatibility Score** ✨ NEW
+  - Calculate match percentage with job posting (0-100%)
+  - Visual breakdown by category (Skills 40%, Experience 30%, Keywords 20%, Education 10%)
+  - Identify critical gaps with importance levels
+  - AI-powered gap analysis and recommendations
+  - Accessible via `/compare` page
 
 - ✅ **Keyword Analysis**
   - Show missing keywords with frequency
@@ -157,16 +159,37 @@ Ensure you have the following installed:
 3. **Set up environment variables**
 
    Create `.env` file in `apps/server/` with:
-   ```
+   ```bash
    DATABASE_URL=your_postgresql_connection_string
    CORS_ORIGIN=http://localhost:3001
    PORT=3000
+   
+   # AI Provider (choose one or multiple - priority: Anthropic > Groq > OpenAI)
+   # Option 1: Anthropic Claude (best accuracy for structured extraction)
+   # Get API key from https://console.anthropic.com/
+   ANTHROPIC_API_KEY=sk-ant-api03-...
+   
+   # Option 2: Groq (very fast and cost-effective, great performance)
+   # Get API key from https://console.groq.com/
+   # GROQ_API_KEY=gsk_...
+   
+   # Option 3: OpenAI (reliable fallback)
+   # Get API key from https://platform.openai.com/api-keys
+   # OPENAI_API_KEY=sk-...
    ```
 
    Create `.env.local` or `.env` file in `apps/web/` with:
-   ```
+   ```bash
    NEXT_PUBLIC_SERVER_URL=http://localhost:3000
    ```
+   
+   **Note**: 
+   - **Priority order**: Anthropic Claude → Groq → OpenAI → Basic parsing
+   - **Anthropic Claude**: Best accuracy for structured data extraction
+   - **Groq**: Very fast, cost-effective, excellent performance (uses Llama 3 70B)
+   - **OpenAI GPT-4**: Reliable fallback option
+   - If no AI provider is configured, uses basic text parsing as fallback (less accurate)
+   - See `.env.example` in the root directory for a template
 
 4. **Push database schema**
    ```

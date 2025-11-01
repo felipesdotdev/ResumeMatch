@@ -24,9 +24,15 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.40",
+    "@ai-sdk/groq": "^2.0.27",
+    "@ai-sdk/openai": "^2.0.59",
     "@nestjs/common": "^11.0.0",
     "@nestjs/swagger": "^11.0.0",
-    "@resumematch/db": "workspace:*"
+    "@resumematch/auth": "workspace:*",
+    "@resumematch/db": "workspace:*",
+    "ai": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "@nestjs/core": "^11.0.0",

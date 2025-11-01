@@ -4,62 +4,298 @@
  * ResumeMatch API
  * OpenAPI spec version: 1.0.0
  */
+import axios from 'axios';
+import type {
+  AxiosRequestConfig,
+  AxiosResponse
+} from 'axios';
 
-import type { AxiosRequestConfig, AxiosResponse } from "axios";
-import axios from "axios";
-
-export type TodoDto = {
+export interface TodoDto {
   id: number;
   title: string;
   completed: boolean;
-};
+}
 
-export type Function = {
-  [key: string]: unknown;
-};
+export interface Function { [key: string]: unknown }
+
+export interface KeywordDto {
+  word: string;
+  frequency: number;
+}
+
+/**
+ * @nullable
+ */
+export type JobDtoCompany = { [key: string]: unknown } | null;
+
+/**
+ * @nullable
+ */
+export type JobDtoUrl = { [key: string]: unknown } | null;
+
+export interface JobDto {
+  id: string;
+  title: string;
+  /** @nullable */
+  company?: JobDtoCompany;
+  description: string;
+  /** @nullable */
+  url?: JobDtoUrl;
+  requiredSkills: string[];
+  preferredSkills: string[];
+  keywords: KeywordDto[];
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ExperienceDto {
+  title: string;
+  company: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+}
+
+export interface EducationDto {
+  degree: string;
+  institution: string;
+  field?: string;
+  graduationDate?: string;
+}
+
+/**
+ * @nullable
+ */
+export type ResumeDtoFileUrl = { [key: string]: unknown } | null;
+
+/**
+ * @nullable
+ */
+export type ResumeDtoFileName = { [key: string]: unknown } | null;
+
+/**
+ * @nullable
+ */
+export type ResumeDtoFileSize = { [key: string]: unknown } | null;
+
+export interface ResumeDto {
+  id: string;
+  userId: string;
+  /** @nullable */
+  fileUrl?: ResumeDtoFileUrl;
+  /** @nullable */
+  fileName?: ResumeDtoFileName;
+  /** @nullable */
+  fileSize?: ResumeDtoFileSize;
+  text: string;
+  skills: string[];
+  experience: ExperienceDto[];
+  education: EducationDto[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateAnalysisDto {
+  /** Resume ID to analyze */
+  resumeId: string;
+  /** Job ID to compare against */
+  jobId: string;
+}
+
+export interface ScoreWeightDto {
+  score: number;
+  weight: number;
+}
+
+export interface BreakdownDto {
+  skills: ScoreWeightDto;
+  experience: ScoreWeightDto;
+  keywords: ScoreWeightDto;
+  education: ScoreWeightDto;
+}
+
+export type GapDtoType = typeof GapDtoType[keyof typeof GapDtoType];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GapDtoType = {
+  skill: 'skill',
+  keyword: 'keyword',
+  experience: 'experience',
+  education: 'education',
+} as const;
+
+export type GapDtoImportance = typeof GapDtoImportance[keyof typeof GapDtoImportance];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GapDtoImportance = {
+  high: 'high',
+  medium: 'medium',
+  low: 'low',
+} as const;
+
+export interface GapDto {
+  type: GapDtoType;
+  missing: string;
+  frequency?: number;
+  importance: GapDtoImportance;
+}
+
+export interface RecommendationDto {
+  section: string;
+  current: string;
+  suggested: string;
+}
+
+export interface AnalysisDto {
+  id: string;
+  userId: string;
+  jobId: string;
+  resumeId: string;
+  /** Overall compatibility score (0-100) */
+  overallScore: number;
+  breakdown: BreakdownDto;
+  gaps: GapDto[];
+  recommendations: RecommendationDto[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 export const getResumeMatchAPI = () => {
-  const appControllerGetHello = <TData = AxiosResponse<void>>(
-    options?: AxiosRequestConfig
-  ): Promise<TData> => axios.get("/", options);
+const appControllerGetHello = <TData = AxiosResponse<void>>(
+     options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.get(
+      `/`,options
+    );
+  }
 
-  const todosControllerFindAll = <TData = AxiosResponse<TodoDto[]>>(
-    options?: AxiosRequestConfig
-  ): Promise<TData> => axios.get("/todos", options);
+const todosControllerFindAll = <TData = AxiosResponse<TodoDto[]>>(
+     options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.get(
+      `/todos`,options
+    );
+  }
 
-  const todosControllerCreate = <TData = AxiosResponse<TodoDto>>(
-    _function: Function,
-    options?: AxiosRequestConfig
-  ): Promise<TData> => axios.post("/todos", _function, options);
+const todosControllerCreate = <TData = AxiosResponse<TodoDto>>(
+    _function: Function, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.post(
+      `/todos`,
+      _function,options
+    );
+  }
 
-  const todosControllerFindOne = <TData = AxiosResponse<TodoDto>>(
+const todosControllerFindOne = <TData = AxiosResponse<TodoDto>>(
+    id: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.get(
+      `/todos/${id}`,options
+    );
+  }
+
+const todosControllerUpdate = <TData = AxiosResponse<TodoDto>>(
     id: string,
-    options?: AxiosRequestConfig
-  ): Promise<TData> => axios.get(`/todos/${id}`, options);
+    _function: Function, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.patch(
+      `/todos/${id}`,
+      _function,options
+    );
+  }
 
-  const todosControllerUpdate = <TData = AxiosResponse<TodoDto>>(
-    id: string,
-    _function: Function,
-    options?: AxiosRequestConfig
-  ): Promise<TData> => axios.patch(`/todos/${id}`, _function, options);
+const todosControllerRemove = <TData = AxiosResponse<void>>(
+    id: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.delete(
+      `/todos/${id}`,options
+    );
+  }
 
-  const todosControllerRemove = <TData = AxiosResponse<void>>(
-    id: string,
-    options?: AxiosRequestConfig
-  ): Promise<TData> => axios.delete(`/todos/${id}`, options);
+const analysisControllerAnalyzeJob = <TData = AxiosResponse<JobDto>>(
+    _function: Function, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.post(
+      `/analysis/job`,
+      _function,options
+    );
+  }
 
-  return {
-    appControllerGetHello,
-    todosControllerFindAll,
-    todosControllerCreate,
-    todosControllerFindOne,
-    todosControllerUpdate,
-    todosControllerRemove,
-  };
-};
-export type AppControllerGetHelloResult = AxiosResponse<void>;
-export type TodosControllerFindAllResult = AxiosResponse<TodoDto[]>;
-export type TodosControllerCreateResult = AxiosResponse<TodoDto>;
-export type TodosControllerFindOneResult = AxiosResponse<TodoDto>;
-export type TodosControllerUpdateResult = AxiosResponse<TodoDto>;
-export type TodosControllerRemoveResult = AxiosResponse<void>;
+const analysisControllerGetJob = <TData = AxiosResponse<JobDto>>(
+    id: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.get(
+      `/analysis/job/${id}`,options
+    );
+  }
+
+const analysisControllerAnalyzeResume = <TData = AxiosResponse<ResumeDto>>(
+    _function: Function, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.post(
+      `/analysis/resume`,
+      _function,options
+    );
+  }
+
+const analysisControllerGetResume = <TData = AxiosResponse<ResumeDto>>(
+    id: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.get(
+      `/analysis/resume/${id}`,options
+    );
+  }
+
+const analysisControllerStreamJob = <TData = AxiosResponse<void>>(
+    _function: Function, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.post(
+      `/analysis/job/stream`,
+      _function,options
+    );
+  }
+
+const analysisControllerStreamResume = <TData = AxiosResponse<void>>(
+    _function: Function, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.post(
+      `/analysis/resume/stream`,
+      _function,options
+    );
+  }
+
+const analysisControllerAnalyzeCompatibility = <TData = AxiosResponse<AnalysisDto>>(
+    createAnalysisDto: CreateAnalysisDto, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.post(
+      `/analysis/compatibility`,
+      createAnalysisDto,options
+    );
+  }
+
+const analysisControllerGetAnalysis = <TData = AxiosResponse<AnalysisDto>>(
+    id: string, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.get(
+      `/analysis/compatibility/${id}`,options
+    );
+  }
+
+return {appControllerGetHello,todosControllerFindAll,todosControllerCreate,todosControllerFindOne,todosControllerUpdate,todosControllerRemove,analysisControllerAnalyzeJob,analysisControllerGetJob,analysisControllerAnalyzeResume,analysisControllerGetResume,analysisControllerStreamJob,analysisControllerStreamResume,analysisControllerAnalyzeCompatibility,analysisControllerGetAnalysis}};
+export type AppControllerGetHelloResult = AxiosResponse<void>
+export type TodosControllerFindAllResult = AxiosResponse<TodoDto[]>
+export type TodosControllerCreateResult = AxiosResponse<TodoDto>
+export type TodosControllerFindOneResult = AxiosResponse<TodoDto>
+export type TodosControllerUpdateResult = AxiosResponse<TodoDto>
+export type TodosControllerRemoveResult = AxiosResponse<void>
+export type AnalysisControllerAnalyzeJobResult = AxiosResponse<JobDto>
+export type AnalysisControllerGetJobResult = AxiosResponse<JobDto>
+export type AnalysisControllerAnalyzeResumeResult = AxiosResponse<ResumeDto>
+export type AnalysisControllerGetResumeResult = AxiosResponse<ResumeDto>
+export type AnalysisControllerStreamJobResult = AxiosResponse<void>
+export type AnalysisControllerStreamResumeResult = AxiosResponse<void>
+export type AnalysisControllerAnalyzeCompatibilityResult = AxiosResponse<AnalysisDto>
+export type AnalysisControllerGetAnalysisResult = AxiosResponse<AnalysisDto>

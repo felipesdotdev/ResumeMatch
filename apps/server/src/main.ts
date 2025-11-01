@@ -79,11 +79,14 @@ async function bootstrap() {
         }
       }
       const body = request.body ? JSON.stringify(request.body) : undefined;
-      const req = new Request(url.toString(), {
+      const reqOptions: RequestInit = {
         method: request.method,
         headers,
-        body,
-      });
+      };
+      if (body && !['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
+        reqOptions.body = body;
+      }
+      const req = new Request(url.toString(), reqOptions);
       const response = await auth.handler(req);
       reply.status(response.status);
       for (const [key, value] of response.headers.entries()) {
